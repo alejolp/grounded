@@ -397,8 +397,8 @@ def main():
     pygame.display.set_caption(GAME_TITLE)
     screen = pygame.display.set_mode((W, H), 0, 0)
     
-    TILES_IMG = pygame.image.load("img/tiles.png")
-    TILES_IMG.set_colorkey((255, 0, 255))
+    TILES_IMG = pygame.image.load("img/tiles.png").convert()
+    TILES_IMG.set_colorkey(TILES_IMG.map_rgb((255, 0, 255)))
     TILES_IMG_RECTS = [pygame.rect.Rect(x * TILE_SIZE, 0, \
         TILE_SIZE, TILE_SIZE) for x in xrange(8)]
 
