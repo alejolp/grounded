@@ -84,11 +84,11 @@ SDL_Surface* Util_LoadBMP(const char* filename) {
 
 	screen = SDL_GetVideoSurface();
 
-	ck = SDL_MapRGB(screen->format, 255, 0, 255);
-
 	tmp = SDL_LoadBMP(filename);
 	if (tmp == NULL)
 		Grounded_SDL_Error();
+
+	ck = SDL_MapRGB(tmp->format, 255, 0, 255);
 
 	if (SDL_SetColorKey(tmp, SDL_SRCCOLORKEY | SDL_RLEACCEL, ck) != 0)
 		Grounded_SDL_Error();
