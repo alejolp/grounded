@@ -9,6 +9,11 @@ This is a research project about the creation of the same game in different prog
 
 ![Screenshot](https://github.com/alejolp/grounded/raw/master/screenshot.png)
 
+Graphics
+========
+
+The graphics were made by Emiliano Luciani.
+
 License
 =======
 
