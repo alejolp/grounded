@@ -228,7 +228,7 @@ void Grounded_Load_Images(void) {
 
 	/* Image file */
 
-	imgs = Util_LoadBMP("img/tiles.bmp");
+	imgs = Util_LoadBMP("../common/img/tiles.bmp");
 
 	/* Rects */
 
@@ -281,7 +281,7 @@ void Grounded_Load_Map(int num) {
 	char buf[MAP_SIZE_X + 2];
 
 	memset(&map_data, 0, sizeof(map_data));
-	snprintf(mapfile, sizeof(mapfile), "maps/%d.txt", num);
+	snprintf(mapfile, sizeof(mapfile), "../common/maps/%d.txt", num);
 
 	map_data.num = num;
 	map_data.apples_count = 0;

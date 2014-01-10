@@ -59,7 +59,7 @@ class GameMap(object):
 
     def load_map_file(self):
         self.data = [list(x) for x in \
-            open("maps/%d.txt" % self.n)]
+            open("../common/maps/%d.txt" % self.n)]
         self._collect_items()
 
     def draw(self, screen):
@@ -397,7 +397,7 @@ def main():
     pygame.display.set_caption(GAME_TITLE)
     screen = pygame.display.set_mode((W, H), 0, 0)
     
-    TILES_IMG = pygame.image.load("img/tiles.png").convert()
+    TILES_IMG = pygame.image.load("../common/img/tiles.png").convert()
     TILES_IMG.set_colorkey(TILES_IMG.map_rgb((255, 0, 255)))
     TILES_IMG_RECTS = [pygame.rect.Rect(x * TILE_SIZE, 0, \
         TILE_SIZE, TILE_SIZE) for x in xrange(8)]
