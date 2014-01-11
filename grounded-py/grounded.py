@@ -290,7 +290,7 @@ class GameEnt(GameObject):
         if self.jumping:
             newpos.top -= self.delta_move
             self.jump_pos -= self.delta_move
-            if self.jump_pos == 0:
+            if self.jump_pos <= 0:
                 self.jumping = False
         else:
             # Cae
