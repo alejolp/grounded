@@ -118,6 +118,9 @@ public class GameCanvas extends Canvas {
 		BufferStrategy bs = getBufferStrategy();
 		int x, y, px, py;
 		
+		if (bs == null)
+			return;
+		
 		g2d = (Graphics2D) bs.getDrawGraphics();
 		
 		for (y = 0, py = 0; y < g.map.H; ++y, py += Constants.TILE_SIZE) {

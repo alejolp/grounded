@@ -47,6 +47,14 @@ public class Map {
 	
 	public Map() {
 		loadMap(1);
+		
+		assert !tileIntersection(0, 0, 32, 0);
+		assert !tileIntersection(0, 0, 32, 32);
+		assert !tileIntersection(0, 0, 0, 32);
+		
+		assert !tileIntersection(32, 0, 0, 0);
+		assert !tileIntersection(32, 32, 0, 0);
+		assert !tileIntersection(0, 32, 0, 0);
 	}
 	
 	public void nextMap() {
@@ -127,7 +135,7 @@ public class Map {
 	
 	private static final boolean tileIntersection(int x1, int y1, int x2, int y2) {
 		final int t = Constants.TILE_SIZE;
-		return (x1 + t >= x2 && x1 < x2 + t && y1 + t >= y2 && y1 < y2 + t);
+		return (x1 + t > x2 && x1 < x2 + t && y1 + t > y2 && y1 < y2 + t);
 	}
 	
 	public GameObject findZombieCollision(int x, int y) {
@@ -165,7 +173,13 @@ public class Map {
 
 	}
 	
-	public int findMinCollisionY(int ex, int ey) {
+	/**
+	 * 
+	 * @param ex
+	 * @param ey
+	 * @return Returns Constants.PANEL_HEIGHT on no collision.
+	 */
+	public int findMinCollisionY(int ex, int ey, Elevator exceptElevator) {
 		int retminy = Constants.PANEL_HEIGHT;
 		
 		// A 32x32 rect can intersect with, at most, four 32x32 rects.
@@ -186,15 +200,23 @@ public class Map {
 		}
 		
 		for (GameObject w : elevators) {
-			if (tileIntersection(ex, ey, w.x, w.y))
+			if (w != exceptElevator && tileIntersection(ex, ey, w.x, w.y))
 				retminy = Math.min(retminy, w.y);
 		}
 		
 		return retminy;
 	}
 	
+	public int findMinCollisionY(int ex, int ey) {
+		return findMinCollisionY(ex, ey, null);
+	}
+	
 	public boolean hasCollision(int x, int y) {
-		return findMinCollisionY(x, y) != Constants.PANEL_HEIGHT;
+		return findMinCollisionY(x, y, null) != Constants.PANEL_HEIGHT;
+	}
+	
+	public boolean hasCollisionExcept(int x, int y, Elevator exceptElevator) {
+		return findMinCollisionY(x, y, exceptElevator) != Constants.PANEL_HEIGHT;
 	}
 	
 	public boolean outOfBounds(int x, int y) {
