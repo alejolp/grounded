@@ -25,7 +25,7 @@ import org.alejolp.grounded.Game;
 public class Zombie extends Ent {
 
 	public Zombie(int x, int y) {
-		super(Constants.ID_ZOMBIE, x, y, Constants.SPEED_PLAYER);
+		super(Constants.ID_ZOMBIE, x, y, Constants.SPEED_ZOMBIE);
 	}
 
 	@Override
