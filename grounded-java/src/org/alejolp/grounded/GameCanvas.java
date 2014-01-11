@@ -47,16 +47,14 @@ public class GameCanvas extends Canvas {
 	
 	public GameCanvas() {
 		super();
-		loadGraphics();
 	}
 
-	public GameCanvas(GraphicsConfiguration arg0) {
-		super(arg0);
+	public void setGraphicsConfiguration(GraphicsConfiguration arg0) {
 		config = arg0;
-		loadGraphics();
 	}
 	
 	public void init() {
+		loadGraphics();
 		setIgnoreRepaint(true);
 		createBufferStrategy(2);
 	}

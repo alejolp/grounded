@@ -45,20 +45,21 @@ public class GamePanel extends JPanel implements Runnable {
 		setLayout(new BorderLayout());
 		validate();
 		
-		mc = new GameCanvas(getGraphicsConfiguration());
+		mc = new GameCanvas();
 		removeAll();
 		add(mc, BorderLayout.CENTER);
 		mc.setVisible(true);
 	}
 	
 	public void start() {
+		mc.setGraphicsConfiguration(getGraphicsConfiguration());
 		mc.init();
-
+		
 		tk = getToolkit();
 		updater = new Runnable() {
 			@Override
 			public void run() {
-				// tk.sync();
+				tk.sync();
 				Game.getInstance().update();
 			}
 		};
@@ -78,7 +79,7 @@ public class GamePanel extends JPanel implements Runnable {
 			syncToolkit();
 			
 			try {
-				Thread.sleep(1000/15);
+				Thread.sleep(1000/25);
 			} catch (InterruptedException e) {
 				
 			}
