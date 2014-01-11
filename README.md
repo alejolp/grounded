@@ -5,7 +5,11 @@ A small platform game.
 
 Because reinventing the wheel several times is the best way to learn about wheels.
 
-This is a research project about the creation of the same game in different programming languages. So far I've done this game in C and Python.
+This is a research project about the creation of the same game in different programming languages. So far I've done this game in:
+
+* C, using SDL 1.2
+* Python, using PyGame
+* Java, using native Swing utilities
 
 ![Screenshot](https://github.com/alejolp/grounded/raw/master/screenshot.png)
 
