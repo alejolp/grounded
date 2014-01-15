@@ -5,6 +5,8 @@ A small platform game.
 
 Because reinventing the wheel several times is the best way to learn about wheels.
 
+Grounded got featured on ![Reddit Programming!](http://www.reddit.com/r/programming/comments/1usjl5/because_reinventing_the_wheel_several_times_is/) Thanks for all the comments.
+
 This is a research project about the creation of the same game in different programming languages. So far I've done this game in:
 
 * C, using SDL 1.2
