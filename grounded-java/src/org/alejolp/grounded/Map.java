@@ -121,6 +121,18 @@ public class Map {
 		update(fireballs);
 	}
 	
+	public void onTimer() {
+		for (Iterator<GameObject> it = specials.iterator(); it.hasNext(); ) {
+			GameObject w = it.next();
+			
+			if (w.remove) {
+				it.remove();
+			} else {
+				w.onTimer();
+			}
+		}	
+	}
+	
 	private static final void update(List<GameObject> L) {
 		for (Iterator<GameObject> it = L.iterator(); it.hasNext(); ) {
 			GameObject w = it.next();

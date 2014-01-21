@@ -32,6 +32,7 @@ public class ZombiePortal extends GameObject {
 		onTimer();
 	}
 	
+	@Override
 	public void onTimer() {
 		Game g = Game.getInstance();
 		if (g.map.items.size() == 0 && g.map.zombies.size() < 40) {

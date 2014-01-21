@@ -40,4 +40,8 @@ public class GameObject {
 	public void update() {
 		// Nothing to do here. This is meant to be @Overriden by subclasses.
 	}
+	
+	public void onTimer() {
+		// Nothing to do here. This is meant to be @Overriden by subclasses.
+	}
 }

@@ -35,6 +35,7 @@ public class Game implements KeyListener {
 	public Player p = new Player(0, 0);
 	
 	private HashMap<Integer, Boolean> keys = new HashMap<Integer, Boolean>();
+	private long lastTimerTime = 0;
 	
 	public static Game getInstance() {
 		return instance;
@@ -51,8 +52,15 @@ public class Game implements KeyListener {
 	}
 	
 	public void update() {
+		long ct = System.currentTimeMillis();
+		
 		map.update();
 		p.update();
+		
+		if (ct - lastTimerTime >= 1000) {
+			lastTimerTime = ct;
+			onTimer();
+		}
 		
 		if (keys.get(KeyEvent.VK_LEFT)) {
 			p.move(true);
@@ -72,6 +80,10 @@ public class Game implements KeyListener {
 		}
 	}
 
+	private void onTimer() {
+		map.onTimer();
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// System.out.println(e);
