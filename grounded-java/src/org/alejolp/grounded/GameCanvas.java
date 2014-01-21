@@ -23,6 +23,7 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -41,7 +42,6 @@ public class GameCanvas extends Canvas {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private GraphicsConfiguration config = null;
 	private BufferedImage tiles = null;
 	private Graphics2D g2d;
 	
@@ -49,10 +49,6 @@ public class GameCanvas extends Canvas {
 		super();
 	}
 
-	public void setGraphicsConfiguration(GraphicsConfiguration arg0) {
-		config = arg0;
-	}
-	
 	public void init() {
 		loadGraphics();
 		setIgnoreRepaint(true);
@@ -87,6 +83,10 @@ public class GameCanvas extends Canvas {
 			}
 		}
 		
+		GraphicsConfiguration config = GraphicsEnvironment.
+				getLocalGraphicsEnvironment().getDefaultScreenDevice().
+				getDefaultConfiguration();
+		
 		// Update image data.
 		if (config != null)
 			tiles = config.createCompatibleImage(w, h, Transparency.BITMASK);
@@ -116,8 +116,10 @@ public class GameCanvas extends Canvas {
 		BufferStrategy bs = getBufferStrategy();
 		int x, y, px, py;
 		
-		if (bs == null)
+		if (bs == null) {
+			loadGraphics();
 			return;
+		}
 		
 		g2d = (Graphics2D) bs.getDrawGraphics();
 		
@@ -139,6 +141,11 @@ public class GameCanvas extends Canvas {
 		drawTileNum(Constants.ID_PLAYER, g.p.x, g.p.y);
 		
 		g2d.dispose();
-		bs.show();
+		
+		if (!bs.contentsLost()) {
+			bs.show();
+		} else {
+			loadGraphics();
+		}
 	}
 }

@@ -1,5 +1,10 @@
 package org.alejolp.grounded;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+
 /*
  * Copyright (C) Alejandro Santos, 2014, ale@ralo.com.ar.
  *
@@ -19,11 +24,31 @@ package org.alejolp.grounded;
  *
  */
 
-public class MainApp {
+public class MainApp extends JFrame {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private GamePanel mp = new GamePanel();
+
+	public MainApp() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().add(mp, BorderLayout.CENTER);
+		mp.setPreferredSize(new Dimension(Constants.PANEL_WIDTH, Constants.PANEL_HEIGHT));
+		pack();		
+		setVisible(true);
+
+		enableInputMethods(true);
+		setFocusable(true);
+		addKeyListener(Game.getInstance());
+        requestFocusInWindow();
+        mp.start();
+	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		MainApp app = new MainApp();
 	}
 
 }

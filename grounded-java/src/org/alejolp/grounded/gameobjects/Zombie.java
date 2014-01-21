@@ -43,6 +43,7 @@ public class Zombie extends Ent {
 	
 	@Override
 	public void reset() {
-		Game.getInstance().map.zombies.remove(this);
+		// Game.getInstance().map.zombies.remove(this);
+		this.remove = true;
 	}
 }

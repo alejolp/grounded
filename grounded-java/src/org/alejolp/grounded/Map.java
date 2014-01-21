@@ -189,6 +189,11 @@ public class Map {
 		int sy2 = ((ey % Constants.TILE_SIZE) != 0) ? sy1 + 2 : sy1 + 1;
 		int x, y;
 		
+		sx1 = Math.max(sx1, 0);
+		sy1 = Math.max(sy1, 0);
+		sx2 = Math.min(sx2, W);
+		sy2 = Math.min(sy2, H);
+		
 		for (y = sy1; y < sy2; ++y) {
 			for (x = sx1; x < sx2; ++x) {
 				if (data[y][x] == '.' && tileIntersection(

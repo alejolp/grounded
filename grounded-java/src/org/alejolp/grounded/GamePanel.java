@@ -52,15 +52,20 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void start() {
-		mc.setGraphicsConfiguration(getGraphicsConfiguration());
 		mc.init();
 		
 		tk = getToolkit();
 		updater = new Runnable() {
 			@Override
 			public void run() {
-				tk.sync();
-				Game.getInstance().update();
+				// tk.sync();
+				try {
+					Game.getInstance().update();
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		
@@ -90,7 +95,11 @@ public class GamePanel extends JPanel implements Runnable {
 		try {
 			SwingUtilities.invokeAndWait(updater);
 		} catch (InterruptedException e1) {
+			System.err.println(e1);
+			e1.printStackTrace();
 		} catch (InvocationTargetException e1) {
+			System.err.println(e1);
+			e1.printStackTrace();
 		}
 	}
 }
