@@ -9,7 +9,7 @@ This is a research project about the creation of the same game in different prog
 
 * C, using SDL 1.2
 * Python, using PyGame
-* Java, using native Swing utilities
+* Java, using native Swing and Java2D
 
 ![Screenshot](https://github.com/alejolp/grounded/raw/master/screenshot.png)
 
