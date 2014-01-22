@@ -3,3 +3,7 @@ grounded-c/grounded
 grounded-java/bin
 grounded-java/.classpath
 
+grounded-cpp/grounded
+
+*.o
+
