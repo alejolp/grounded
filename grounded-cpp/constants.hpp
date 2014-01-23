@@ -20,10 +20,32 @@
  *
  */
 
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 namespace grounded {
 
 #define TILE_SIZE 32
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
+enum speeds {
+    SPEED_PLAYER = 8,
+    SPEED_ZOMBIE = 2,
+    SPEED_FIREB  = 12,
+};
+
+enum ids {
+    ID_BACKGROUND = 0,
+    ID_WALL,
+    ID_ITEM,
+    ID_PLAYER,
+    ID_EXIT,
+    ID_ELEVATOR,
+    ID_ZOMBIE,
+    ID_FIREBALL,
+};
+
 }
+
+#endif

@@ -23,11 +23,12 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <boost/noncopyable.hpp>
 #include <SDL.h>
 
 namespace grounded {
 
-class renderer {
+class renderer : private boost::noncopyable {
 public:
     static renderer* instance() { return &s_renderer; }
 

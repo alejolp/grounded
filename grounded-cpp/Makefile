@@ -3,7 +3,7 @@
 CC=g++
 CFLAGS=-c -Wall -O2 $(shell sdl2-config --cflags)
 LDFLAGS=$(shell sdl2-config --libs)
-SOURCES=grounded.cpp renderer.cpp game.cpp util.cpp
+SOURCES=grounded.cpp renderer.cpp game.cpp util.cpp gameobjects.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=grounded
 

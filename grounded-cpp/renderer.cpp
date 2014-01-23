@@ -24,6 +24,7 @@
 #include <iostream>
 #include <SDL.h>
 
+#include "game.hpp"
 #include "renderer.hpp"
 #include "util.hpp"
 #include "constants.hpp"
@@ -83,6 +84,13 @@ void renderer::init_sdl2() {
     if (!tmp)
         SDL2_PrintErrorAndDie();
     
+    if (0 != SDL_SetColorKey(tmp, 
+        SDL_TRUE, 
+        SDL_MapRGB(tmp->format, 255, 0, 255))) {
+        SDL2_PrintErrorAndDie();
+    }
+        
+    
     tiles_ = SDL_CreateTextureFromSurface(renderer_, tmp);
     if (!tiles_)
         SDL2_PrintErrorAndDie();
@@ -97,9 +105,21 @@ void renderer::close_sdl2() {
 }
 
 void renderer::render() {
-    SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
-    SDL_RenderClear(renderer_);
-    draw_tile(0, 0, 0);
+    game* g = game::instance();
+    gamemap* m = g->map();
+    
+    int y, x, xpx, ypx;
+    
+    // SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+    // SDL_RenderClear(renderer_);
+    // draw_tile(0, 0, 0);
+    
+    for (y=0, ypx=0; y < m->height(); ++y, ypx += TILE_SIZE) {
+        for (x=0, xpx=0; x < m->width(); ++x, xpx += TILE_SIZE) {
+            draw_tile(m->get(x, y) == '.' ? ID_WALL : ID_BACKGROUND, xpx, ypx);
+        }
+    }
+    
     SDL_RenderPresent(renderer_);
 }
 
