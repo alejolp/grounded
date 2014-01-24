@@ -43,6 +43,7 @@ public:
     void init();
     void cleanup();
     void render();
+    void fullscreen();
     
 private:
     void init_sdl2();

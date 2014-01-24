@@ -25,6 +25,8 @@
 
 #include <boost/noncopyable.hpp>
 #include <vector>
+#include <map>
+#include <SDL.h>
 
 #include "gameobjects.hpp"
 
@@ -75,7 +77,7 @@ public:
     
     VG& fireballs() { return fireballs_; }
     
-    gameobject* getplayer() { return player_.get(); }
+    ent* getplayer() { return static_cast<ent*>( player_.get() ); }
     
     /// Returns true if there is a collision (pixel coordinates)
     bool has_zombie_collision(int x, int y);
@@ -84,14 +86,14 @@ public:
     bool has_exit_collision(int x, int y);
 
     /// Returns zombie index if there is a collision (pixel coordinates)
-    int find_zombie_collision(int x, int y);
+    gameobject* find_zombie_collision(int x, int y);
     
     /// Collect items (pixel coordinates)
     bool collect_items(int x, int y);
 
-    bool has_collision(int x, int y, gameobject* except);
+    bool has_collision(int x, int y, gameobject* except = 0);
     
-    int find_min_collision_y(int ex, int ey, gameobject* except);
+    int find_min_collision_y(int ex, int ey, gameobject* except = 0);
     
 private:
     void load_map(int n);
@@ -123,15 +125,17 @@ public:
     virtual ~game() {}
     
     gamemap* map() { return &map_; }
-    
     bool run() const { return run_; }
-    void poll_events();
     
+    void poll_events();
     void update();
+    void init();
+    void on_timer();
     
 private:
     bool run_;
     gamemap map_;
+    std::map<Uint32, Uint8> teclas_;
 };
 
 };

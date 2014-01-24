@@ -32,11 +32,13 @@ int main(int argc, char** argv) {
     grounded::game* g = grounded::game::instance();
     
     r->init();
+    g->init();
     
     while (g->run()) {
         g->poll_events();
         g->update();
         r->render();
+        SDL_Delay(1000/25);
     }
     
     r->cleanup();

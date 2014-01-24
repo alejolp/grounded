@@ -104,6 +104,12 @@ void renderer::close_sdl2() {
     SDL_Quit();
 }
 
+void renderer::fullscreen() {
+    if (0 != SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP )) {
+        SDL2_PrintErrorAndDie();
+    }
+}
+
 void renderer::render() {
     game* g = game::instance();
     gamemap* m = g->map();

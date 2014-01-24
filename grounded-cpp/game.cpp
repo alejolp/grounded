@@ -30,6 +30,7 @@
 #include "game.hpp"
 #include "gameobjects.hpp"
 #include "constants.hpp"
+#include "renderer.hpp"
 
 
 namespace grounded {
@@ -49,8 +50,15 @@ void gamemap::load_map(int n) {
     int x, y, pixelx, pixely;
     
     mapnum_ = n;
-    std::stringstream s;
     
+    items_.clear();
+    exits_.clear();
+    elevators_.clear();
+    zombies_.clear();
+    specials_.clear();
+    m_.clear();
+    
+    std::stringstream s;
     s << "../common/maps/" << n << ".txt";
     std::ifstream f;
     f.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
@@ -114,6 +122,7 @@ void gamemap::update() {
     update(elevators());
     update(zombies());
     update(fireballs());
+    getplayer()->update();
 }
 
 void gamemap::update(VG& v) {
@@ -150,8 +159,8 @@ int gamemap::find_collision(int x, int y, VG& v, gameobject* except) {
     
     for (it=v.begin(); it != v.end(); ++it, ++i) {
         gameobject_ptr p = *it;
-        b.x = p->x() * TILE_SIZE;
-        b.y = p->y() * TILE_SIZE;
+        b.x = p->x();
+        b.y = p->y();
         if (p.get() != except && SDL_HasIntersection(&a, &b)) {
             return i;
         }
@@ -160,7 +169,7 @@ int gamemap::find_collision(int x, int y, VG& v, gameobject* except) {
 }
 
 bool gamemap::has_collision(int x, int y, gameobject* except) {
-    return find_min_collision_y(x, y, 0) != WINDOW_HEIGHT;
+    return find_min_collision_y(x, y, except) != WINDOW_HEIGHT;
 }
 
 int gamemap::find_min_collision_y(int ex, int ey, gameobject* except) {
@@ -197,8 +206,8 @@ int gamemap::find_min_collision_y(int ex, int ey, gameobject* except) {
     VG::iterator it;
     for (it=elevators().begin(); it != elevators().end(); ++it) {
         gameobject_ptr p = *it;
-        b.x = p->x() * TILE_SIZE;
-        b.y = p->y() * TILE_SIZE;
+        b.x = p->x();
+        b.y = p->y();
         if (p.get() != except && SDL_HasIntersection(&a, &b)) {
             retminy = std::min(retminy, b.y);
         }
@@ -215,8 +224,9 @@ bool gamemap::has_exit_collision(int x, int y) {
     return find_collision(x, y, exits(), 0) != -1;
 }
 
-int gamemap::find_zombie_collision(int x, int y) {
-    return find_collision(x, y, zombies(), 0);
+gameobject* gamemap::find_zombie_collision(int x, int y) {
+    int idx = find_collision(x, y, zombies(), 0);
+    return idx != -1 ? zombies_[idx].get() : 0;
 }
 
 bool gamemap::collect_items(int x, int y) {
@@ -232,8 +242,8 @@ bool gamemap::collect_items(int x, int y) {
     it=items().begin();
     while (it != items().end()) {
         gameobject_ptr p = *it;
-        b.x = p->x() * TILE_SIZE;
-        b.y = p->y() * TILE_SIZE;
+        b.x = p->x();
+        b.y = p->y();
         if (SDL_HasIntersection(&a, &b)) {
             // p->mark_for_destroy();
             it = items().erase(it);
@@ -254,6 +264,7 @@ game::game() : run_(true) {
 
 void game::poll_events() {
     SDL_Event ev;
+    
     while (SDL_PollEvent(&ev)) {
         switch (ev.type) {
         case SDL_QUIT:
@@ -261,15 +272,70 @@ void game::poll_events() {
             break;
 
         case SDL_KEYDOWN:
-            if (ev.key.keysym.sym == SDLK_ESCAPE)
-                run_ = false;
+            {
+                teclas_[ev.key.keysym.sym] = 1;
+                switch (ev.key.keysym.sym) {
+                case SDLK_ESCAPE:
+                    run_ = false;
+                    break;
+                    
+                case SDLK_F1:
+                    map()->next_map();
+                    break;
+                    
+                case SDLK_F5:
+                    /* renderer::instance()->fullscreen(); */
+                    break;
+                    
+                case SDLK_SPACE:
+                    map()->getplayer()->jump();
+                    break;
+                    
+                case SDLK_z:
+                    map()->getplayer()->fire();
+                    break;
+                }
+            }
+            break;
+        
+        case SDL_KEYUP:
+            teclas_[ev.key.keysym.sym] = 0;
+            break;
+            
+        case SDL_USEREVENT + 0:
+            on_timer();
             break;
         }
+    }
+    
+    if (teclas_[SDLK_LEFT] || teclas_[SDLK_RIGHT]) {
+        map()->getplayer()->move(teclas_[SDLK_LEFT]);
     }
 }
 
 void game::update() {
     map_.update();
+}
+
+void game::on_timer() {
+    map_.on_timer();
+}
+
+namespace {
+    Uint32 timer_callback(Uint32 interval, void *param) {
+        SDL_Event ev;
+
+        memset(&ev, 0, sizeof(ev));
+        ev.type = SDL_USEREVENT + 0;
+
+        SDL_PushEvent(&ev);
+
+        return interval;
+    }
+}
+
+void game::init() {
+    SDL_AddTimer(1000, timer_callback, 0);
 }
 
 }

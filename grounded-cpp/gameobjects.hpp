@@ -64,7 +64,7 @@ public:
     ent(std::size_t imgnum, int x, int y, int speed);
 
     virtual void update();
-    virtual void move();
+    virtual void move(bool move_left);
     virtual void reset();
     virtual void fire();
     virtual void jump();
