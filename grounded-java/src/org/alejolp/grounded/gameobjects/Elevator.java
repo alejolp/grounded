@@ -39,7 +39,7 @@ public class Elevator extends GameObject {
 		if (bounded) {
 			int newy = y;
 			newy += down ? 1 : -1;
-			if (Game.getInstance().map.hasCollisionExcept(x, newy, this)) {
+			if (Game.getInstance().map.hasCollisionExcept(x, newy, this) || Game.getInstance().map.outOfBounds(x, newy)) {
 				down = !down;
 			} else {
 				y = newy;

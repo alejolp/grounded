@@ -64,6 +64,9 @@ public class Map {
 	private void loadMap(int n) {
 		int x, y;
 		
+		if (n == Data.MAP_DATA.length)
+			return;
+		
 		currentMapNum = n;
 		String[] d = Data.MAP_DATA[n].split("\n");
 		data = new char[d.length][];
