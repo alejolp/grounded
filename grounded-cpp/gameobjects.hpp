@@ -24,12 +24,17 @@
 #define GAMEOBJECTS_H
 
 #include <cstdlib>
+#include <vector>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "constants.hpp"
 
 
 namespace grounded {
+
+class gameobject;
+typedef boost::shared_ptr<gameobject> gameobject_ptr;
 
 class gameobject : private boost::noncopyable {
 public:
@@ -40,13 +45,19 @@ public:
     int x() const { return x_; }
     int y() const { return y_; }
     
+    void mark_for_destroy() { destroy_ = true; }
+    bool is_destroyed() const { return destroy_; }
+    
     virtual void on_timer();
     virtual void update();
     
 protected:
+    bool destroy_;
     std::size_t imgnum_;
     int x_, y_;
 };
+
+typedef std::vector<gameobject_ptr> VG;
 
 class ent : public gameobject {
 public:
@@ -79,12 +90,22 @@ public:
 
 class elevator : public gameobject {
 public:
-    elevator(int x, int y, bool bounded) : gameobject(ID_ELEVATOR, x, y), bounded_(bounded) {}
+    elevator(int x, int y, bool bounded) 
+        : gameobject(ID_ELEVATOR, x, y), 
+          down_(true), 
+          bounded_(bounded), 
+          level_lim_(WINDOW_HEIGHT - TILE_SIZE * 3)
+    {
+        level_ = level_lim_;
+    }
     
     virtual void update();
     
 private:
+    bool down_;
     bool bounded_;
+    int level_lim_;
+    int level_;
 };
 
 class fireball : public gameobject {

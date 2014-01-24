@@ -39,13 +39,14 @@ game game::s_game;
 
 gamemap::gamemap() : mapnum_(0), w_(-1), h_(-1) {
     load_map(1);
+    player_.reset(new player(0, 0));
 }
 
 gamemap::~gamemap() {
 }
 
 void gamemap::load_map(int n) {
-    int x, y;
+    int x, y, pixelx, pixely;
     
     mapnum_ = n;
     std::stringstream s;
@@ -57,7 +58,7 @@ void gamemap::load_map(int n) {
     
     h_ = 0;
     
-    for (y=0; y<(WINDOW_HEIGHT/TILE_SIZE); ++y, ++h_) {
+    for (y=0, pixely=0; y<(WINDOW_HEIGHT/TILE_SIZE); ++y, ++h_, pixely += TILE_SIZE) {
         char line[256];
         std::size_t line_len;
         
@@ -65,15 +66,42 @@ void gamemap::load_map(int n) {
         line_len = std::strlen(line);
         
         m_.resize(m_.size() + 1);
-        VC& fila = m_[m_.size() - 1];
+        VC& row = m_[m_.size() - 1];
         if (w_ == -1) {
             w_ = line_len;
         } else if (w_ != (int)line_len) {
             throw std::exception();
         }
-        fila.insert(fila.begin(), line, line + line_len);
-        for (x=0; x<w_; ++x) {
-            
+        row.insert(row.begin(), line, line + line_len);
+        
+        for (x=0, pixelx=0; x<w_; ++x, pixelx += TILE_SIZE) {
+            switch (row[x]) {
+            case '+': // Item
+                items_.push_back(gameobject_ptr(
+                    new item(pixelx, pixely)));
+                break;
+                
+            case '*': // Exit
+                exits_.push_back(gameobject_ptr(
+                    new exit(pixelx, pixely)));
+                break;
+                
+            case '!': // Elevator
+            case '?':
+                elevators_.push_back(gameobject_ptr(
+                    new elevator(pixelx, pixely, (row[x] == '?'))));
+                break;
+                
+            case 'z': // Zombie
+                zombies_.push_back(gameobject_ptr(
+                    new zombie(pixelx, pixely)));
+                break;
+                
+            case '$': // Zombie Portal
+                specials_.push_back(gameobject_ptr(
+                    new zombieportal(pixelx, pixely)));
+                break;
+            }
         }
     }
 }
@@ -83,27 +111,139 @@ void gamemap::next_map() {
 }
 
 void gamemap::update() {
+    update(elevators());
+    update(zombies());
+    update(fireballs());
+}
+
+void gamemap::update(VG& v) {
+    VG::iterator it = v.begin();
     
+    while (it != v.end()) {
+        gameobject_ptr p = *it;
+        if (p->is_destroyed()) {
+            it = v.erase(it);
+        } else {
+            p->update();
+            ++it;
+        }
+    }
 }
 
 void gamemap::on_timer() {
+    VG::iterator it;
+    for (it=specials().begin(); it != specials().end(); ++it) {
+        gameobject_ptr p = *it;
+        p->on_timer();
+    }
+}
+
+int gamemap::find_collision(int x, int y, VG& v, gameobject* except) {
+    VG::iterator it;
+    int i = 0;
+    SDL_Rect a, b;
     
-}
-
-bool gamemap::has_zombie_collision(int x, int y) {
-    return false;
-}
-
-bool gamemap::has_exit_collision(int x, int y) {
-    return false;
-}
-
-int gamemap::find_zombie_collision(int x, int y) {
+    a.x = x;
+    a.y = y;
+    a.w = a.h = TILE_SIZE;
+    b.w = b.h = TILE_SIZE;
+    
+    for (it=v.begin(); it != v.end(); ++it, ++i) {
+        gameobject_ptr p = *it;
+        b.x = p->x() * TILE_SIZE;
+        b.y = p->y() * TILE_SIZE;
+        if (p.get() != except && SDL_HasIntersection(&a, &b)) {
+            return i;
+        }
+    }
     return -1;
 }
 
+bool gamemap::has_collision(int x, int y, gameobject* except) {
+    return find_min_collision_y(x, y, 0) != WINDOW_HEIGHT;
+}
+
+int gamemap::find_min_collision_y(int ex, int ey, gameobject* except) {
+    int retminy = WINDOW_HEIGHT;
+
+    // A 32x32 rect can intersect with, at most, four 32x32 rects.
+    int sx1 = ex / TILE_SIZE;
+    int sy1 = ey / TILE_SIZE;
+    int sx2 = ((ex % TILE_SIZE) != 0) ? sx1 + 2 : sx1 + 1;
+    int sy2 = ((ey % TILE_SIZE) != 0) ? sy1 + 2 : sy1 + 1;
+    int x, y;
+    SDL_Rect a, b;
+    
+    sx1 = std::max(sx1, 0);
+    sy1 = std::max(sy1, 0);
+    sx2 = std::min(sx2, width());
+    sy2 = std::min(sy2, height());
+
+    a.x = ex;
+    a.y = ey;
+    a.w = a.h = TILE_SIZE;
+    b.w = b.h = TILE_SIZE;
+    
+    for (y = sy1; y < sy2; ++y) {
+        for (x = sx1; x < sx2; ++x) {
+            b.x = x * TILE_SIZE;
+            b.y = y * TILE_SIZE;
+            if (get(x, y) == '.' && SDL_HasIntersection(&a, &b)) {
+                retminy = std::min(retminy, b.y);
+            }
+        }
+    }
+
+    VG::iterator it;
+    for (it=elevators().begin(); it != elevators().end(); ++it) {
+        gameobject_ptr p = *it;
+        b.x = p->x() * TILE_SIZE;
+        b.y = p->y() * TILE_SIZE;
+        if (p.get() != except && SDL_HasIntersection(&a, &b)) {
+            retminy = std::min(retminy, b.y);
+        }
+    }
+
+    return retminy;
+}
+
+bool gamemap::has_zombie_collision(int x, int y) {
+    return find_collision(x, y, zombies(), 0) != -1;
+}
+
+bool gamemap::has_exit_collision(int x, int y) {
+    return find_collision(x, y, exits(), 0) != -1;
+}
+
+int gamemap::find_zombie_collision(int x, int y) {
+    return find_collision(x, y, zombies(), 0);
+}
+
 bool gamemap::collect_items(int x, int y) {
-    return false;
+    bool ret = false;
+    VG::iterator it;
+    SDL_Rect a, b;
+    
+    a.x = x;
+    a.y = y;
+    a.w = a.h = TILE_SIZE;
+    b.w = b.h = TILE_SIZE;
+    
+    it=items().begin();
+    while (it != items().end()) {
+        gameobject_ptr p = *it;
+        b.x = p->x() * TILE_SIZE;
+        b.y = p->y() * TILE_SIZE;
+        if (SDL_HasIntersection(&a, &b)) {
+            // p->mark_for_destroy();
+            it = items().erase(it);
+            ret = true;
+        } else {
+            ++it;
+        }
+    }
+    
+    return ret;
 }
 
 
@@ -129,7 +269,7 @@ void game::poll_events() {
 }
 
 void game::update() {
-    
+    map_.update();
 }
 
 }

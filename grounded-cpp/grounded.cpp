@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     
     while (g->run()) {
         g->poll_events();
+        g->update();
         r->render();
     }
     

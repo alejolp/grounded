@@ -25,6 +25,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <SDL.h>
+#include "game.hpp"
 
 namespace grounded {
 
@@ -48,6 +49,16 @@ private:
     void close_sdl2();
     
     void draw_tile(int n, int x, int y);
+    void draw_objects(VG& v);
+    
+    void draw(gameobject* p) {
+        draw_tile(p->imgnum(), p->x(), p->y());
+    }
+    
+    void draw(gameobject_ptr p) {
+        draw_tile(p->imgnum(), p->x(), p->y());
+    }
+    
     
     SDL_Window* window_;
     SDL_Renderer* renderer_;

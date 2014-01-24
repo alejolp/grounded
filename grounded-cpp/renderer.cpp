@@ -120,7 +120,29 @@ void renderer::render() {
         }
     }
     
+    // Items
+    draw_objects(m->items());
+    // Zombies
+    draw_objects(m->zombies());
+    // Exits
+    draw_objects(m->exits());
+    // Elevators
+    draw_objects(m->elevators());
+    // Specials
+    draw_objects(m->specials());
+    // Fireballs
+    draw_objects(m->fireballs());
+    // Player
+    draw(m->getplayer());
+    
     SDL_RenderPresent(renderer_);
+}
+
+void renderer::draw_objects(VG& v) {
+    VG::iterator it;
+    for (it = v.begin(); it != v.end(); ++it) {
+        draw(*it);
+    }
 }
 
 void renderer::draw_tile(int n, int x, int y) {

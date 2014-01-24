@@ -26,7 +26,7 @@
 namespace grounded {
 
 gameobject::gameobject(std::size_t imgnum, int x, int y)
-    : imgnum_(imgnum), x_(x), y_(y) {}
+    : destroy_(false), imgnum_(imgnum), x_(x), y_(y) {}
 
 gameobject::~gameobject() {}
 
@@ -38,7 +38,10 @@ ent::ent(std::size_t imgnum, int x, int y, int speed)
     : gameobject(imgnum, x, y), speed_(speed), jumping_(false), 
       jump_pos_(0), grounded_(false), left_(true) {}
 
-void ent::update() {}
+void ent::update() {
+    game* g = game::instance();
+    gamemap* m = g->map();
+}
 
 void ent::move() {}
 
@@ -51,6 +54,24 @@ void ent::jump() {}
 void ent::check_item_collision() {}
 
 void elevator::update() {
+    gamemap* m = game::instance()->map();
+    
+    if (bounded_) {
+        int newy = y_ + ((down_) ? 1 : (-1));
+        
+        if (m->has_collision(x_, newy, this)) {
+            down_ = !down_;
+        } else {
+            y_ = newy;
+        }
+    } else {
+        y_ += ((down_) ? 1 : (-1));
+        level_--;
+        if (level_ <= 0) {
+            level_ = level_lim_;
+            down_ = !down_;
+        }
+    }
 }
 
 void fireball::update() {
@@ -88,6 +109,11 @@ void player::reset() {
 
 void zombieportal::on_timer() {
     game* g = game::instance();
+    gamemap* m = g->map();
+    
+    if (m->items().size() == 0 && m->zombies().size() < 40) {
+        m->zombies().push_back(gameobject_ptr(new zombie(x_, y_)));
+    }
 }
 
 }

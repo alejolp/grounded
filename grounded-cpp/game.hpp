@@ -33,6 +33,9 @@ namespace grounded {
 
 class gamemap : private boost::noncopyable {
 public:
+    typedef std::vector<char> VC;
+    typedef std::vector<VC> VVC;
+
     gamemap();
     virtual ~gamemap();
     
@@ -60,6 +63,20 @@ public:
     /// Get map height in tiles
     int height() const { return h_; }
     
+    VG& items() { return items_; }
+    
+    VG& exits() { return exits_; }
+    
+    VG& elevators() { return elevators_; }
+    
+    VG& zombies() { return zombies_; }
+    
+    VG& specials() { return specials_; }
+    
+    VG& fireballs() { return fireballs_; }
+    
+    gameobject* getplayer() { return player_.get(); }
+    
     /// Returns true if there is a collision (pixel coordinates)
     bool has_zombie_collision(int x, int y);
     
@@ -71,16 +88,27 @@ public:
     
     /// Collect items (pixel coordinates)
     bool collect_items(int x, int y);
+
+    bool has_collision(int x, int y, gameobject* except);
+    
+    int find_min_collision_y(int ex, int ey, gameobject* except);
     
 private:
-    typedef std::vector<char> VC;
-    typedef std::vector<VC> VVC;
-
     void load_map(int n);
+    void update(VG& v);
+    int find_collision(int x, int y, VG& v, gameobject* except);
     
     int mapnum_;
     int w_, h_;
     VVC m_;
+    
+    VG items_;
+    VG exits_;
+    VG elevators_;
+    VG zombies_;
+    VG specials_;
+    VG fireballs_;
+    gameobject_ptr player_;
 };
 
 class game : private boost::noncopyable {
