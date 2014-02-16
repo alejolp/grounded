@@ -1,7 +1,7 @@
 Grounded
 ======== 
 
-A small platform game, by Alejandro Santos, ale@ralo.com.ar.
+A small platform game, by Alejandro Santos, ale@ralo.com.ar. This project got featured on [Reddit Programming](http://www.reddit.com/r/programming/comments/1usjl5/because_reinventing_the_wheel_several_times_is/), thanks for all the comments!!
 
 Because reinventing the wheel several times is the best way to learn about wheels.
 
