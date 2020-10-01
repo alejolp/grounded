@@ -4,7 +4,6 @@
 """
 Grounded. Pequeño juego de plataformas.
 
- *
  * Copyright (C) Alejandro Santos, 2014, ale@ralo.com.ar.
  *
  *      This program is free software; you can redistribute it and/or modify
@@ -20,7 +19,8 @@ Grounded. Pequeño juego de plataformas.
  *      You should have received a copy of the GNU General Public License
  *      along with this program; if not, write to the Free Software
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
+ 
+ 
 """
 
 import pygame
